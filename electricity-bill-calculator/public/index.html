@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Electricity Bill Calculator</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  </head>
+  <body class="p-4">
+    <div class="container">
+      <h2>Electricity Bill Calculator</h2>
+      <form id="billForm">
+        <input
+          type="text"
+          class="form-control mb-2"
+          id="name"
+          placeholder="Name"
+          required
+        />
+        <input
+          type="email"
+          class="form-control mb-2"
+          id="email"
+          placeholder="Email"
+          required
+        />
+        <input
+          type="text"
+          class="form-control mb-2"
+          id="address"
+          placeholder="Address"
+          required
+        />
+        <input
+          type="number"
+          class="form-control mb-2"
+          id="units"
+          placeholder="Units Consumed"
+          required
+        />
+        <button type="submit" class="btn btn-primary">Calculate Bill</button>
+      </form>
+      <div id="result" class="mt-3"></div>
+    </div>
+
+    <script>
+      $("#billForm").on("submit", function (e) {
+        e.preventDefault();
+
+        const name = $("#name").val();
+        const email = $("#email").val();
+        const address = $("#address").val();
+        const units = $("#units").val();
+
+        // First, create the consumer
+        $.post("/api/consumer", { name, email, address }, function (data) {
+          const consumer_id = data.id;
+
+          // Then, create the bill
+          $.post("/api/bill", { consumer_id, units }, function (billData) {
+            $("#result").html(
+              `<div class="alert alert-success">Bill Amount: ₹${billData.amount.toFixed(
+                2
+              )}</div>`
+            );
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
